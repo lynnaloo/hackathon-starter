@@ -7,12 +7,15 @@ file { '/etc/motd':
 ***********************************
 
   Welcome to the
-	Hackathon-Starter Virtual Machine
+	Hackathon-Starter Virtual Machine!
 
-- OS:      Ubuntu precise-server-cloudimg-amd64
+- OS:      Ubuntu 12.04
 - Node:    ${node_version}
 - IP:      192.168.33.20
-- Code:    ~/hackathon-starter
+
+To start the server:
+cd hackathon-starter
+node app.js
 
 ***********************************
 \n"

@@ -11,6 +11,12 @@ class setup($node_version = "v0.10.26") {
     # Support packages
     class { support: }
 
+    exec { "git submodule update":
+      cwd     => "/home/vagrant/hackathon-starter",
+      command => "git submodule update --init --recursive",
+      require => Class["support"]
+    }
+
     # Install Node
     class { 'nvm':
         node_version => $node_version,
@@ -31,9 +37,18 @@ class setup($node_version = "v0.10.26") {
       require => Exec['install-node'],
     }
 
-    exec { "git submodule update":
-      cwd     => "/home/vagrant/hackathon-starter",
-      command => "git submodule update --init --recursive",
-      require => Class["support"]
+    package { 'mongodb':
+      ensure => present,
+    }
+
+    service { 'mongodb':
+      ensure  => running,
+      require => Package['mongodb'],
+    }
+
+    exec { 'allow remote mongo connections':
+      command => "/usr/bin/sudo sed -i 's/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/g' /etc/mongodb.conf",
+      notify  => Service['mongodb'],
+      onlyif  => '/bin/grep -qx  "bind_ip = 127.0.0.1" /etc/mongodb.conf',
     }
 }
